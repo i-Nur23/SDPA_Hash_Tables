@@ -4,6 +4,17 @@ namespace Program
 {
     internal static class Program
     {
+        struct HashHead
+        {
+            unsafe
+            {
+
+                public *string Begin;
+            public *string End; }
+        }
+        }
+        
+
         private const int m = 5;
         private static int count = 0;
         private static void Main()
@@ -110,16 +121,18 @@ namespace Program
         {
             int counter = 0;
             int index = GetHashCode(newKey);
-            for (int i = 0; i < m - 2; i++)
+            while (table[index] != null)
             {
-                int j = (index + i) % m;
-                counter++;
-                if (table[j] == null)
+                if (index == table.Length - 1)
                 {
-                    table[j] = newKey;
-                    break;
+                    index = -1;
                 }
+                index++;
+                counter++;
             }
+
+            counter++;
+            table[index] = newKey;
 
             count++;
             Console.WriteLine(count);
@@ -143,16 +156,31 @@ namespace Program
         private static int Search(string[] table, string key, ref int counter)
         {
             int index = GetHashCode(key);
-            for (int i = 0; i < m - 2; i++)
+            int startIndex = index;
+            counter++;
+            if (table[index] == key)
             {
-                int j = (index + i) % m;
+                return index;
+            }
+            index++;
+            if (index == table.Length)
+            {
+                index = 0;
+            }
+            while (index != startIndex)
+            {
                 counter++;
-                if (table[j] == key)
+                if (table[index] == key)
                 {
-                    return j;
+                    return index;
+                }
+                index++;
+                if (index == table.Length)
+                {
+                    index = 0;
                 }
             }
-            return -1;   
+            return -1;
         }
 
         private static int GetHashCode(string key)
@@ -166,4 +194,3 @@ namespace Program
         }
     }
 }
-
